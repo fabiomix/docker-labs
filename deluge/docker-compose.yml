@@ -1,0 +1,21 @@
+---
+version: "2.1"
+services:
+  # Deluge
+  # A lightweight, free, cross-platform bittorrent client.
+
+  deluge:
+    image: ghcr.io/linuxserver/deluge:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+      - DELUGE_LOGLEVEL=error  # optional
+    volumes:
+      - ./config:/config
+      - ./storage:/downloads
+    ports:
+      - 8112:8112
+      - 6881:6881
+      - 6881:6881/udp
+    restart: unless-stopped

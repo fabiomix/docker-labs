@@ -1,0 +1,25 @@
+---
+version: "2.1"
+services:
+  # Emby
+  # An open media server for personal streaming.
+
+  emby:
+    image: ghcr.io/linuxserver/emby:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+    volumes:
+      - ./config:/config
+      - ./media:/data
+      - /opt/vc/lib:/opt/vc/lib  # optional
+    ports:
+      - 8096:8096
+    devices:
+      - /dev/dri:/dev/dri  # optional
+      - /dev/vchiq:/dev/vchiq  # optional
+      - /dev/video10:/dev/video10  # optional
+      - /dev/video11:/dev/video11  # optional
+      - /dev/video12:/dev/video12  # optional
+    restart: unless-stopped

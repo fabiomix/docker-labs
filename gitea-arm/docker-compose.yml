@@ -1,0 +1,27 @@
+---
+version: "2.1"
+services:
+  # Gitea
+  # A painless self-hosted Git service.
+
+  # Documentation and useful links
+  # - https://docs.gitea.io/en-us/config-cheat-sheet/
+
+  gitea:
+    image: kunde21/gitea-arm:v1.11
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - DOMAIN=raspberrypi.local
+      - GITEA__server__DISABLE_SSH=true
+      - GITEA__service__DISABLE_REGISTRATION=true
+      - GITEA__service__REQUIRE_SIGNIN_VIEW=true
+    volumes:
+      - ./config:/data/
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "3000:3000"
+    extra_hosts:
+      - "raspberrypi.local:127.0.0.2"
+    restart: unless-stopped
