@@ -1,0 +1,21 @@
+---
+version: "2.1"
+services:
+  # Linkding
+  # Self-hosted bookmark service.
+
+  # Documentation and useful links:
+  # - https://github.com/sissbruecker/linkding/blob/master/README.md
+
+  linkding:
+    image: sissbruecker/linkding:latest
+    environment:
+      # Option to disable background tasks
+      - LD_DISABLE_BACKGROUND_TASKS=True
+      # Option to disable URL validation for bookmarks completely
+      - LD_DISABLE_URL_VALIDATION=False
+    volumes:
+      - ./storage:/etc/linkding/data
+    ports:
+      - 9090:9090
+    restart: unless-stopped
