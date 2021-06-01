@@ -1,0 +1,46 @@
+---
+version: "2.1"
+services:
+  # Odoo - an all-in-one open-source business management software.
+  # Mailhog - simple SMTP server which catches any message sent to it.
+
+  # Documentation and useful links:
+  # - https://github.com/mailhog/MailHog/issues/56
+
+  web:
+    image: odoo:12.0
+    environment:
+      - USER=odoo
+      - PASSWORD=odoo
+    volumes:
+      - ./addons:/mnt/extra-addons
+      - ./config:/etc/odoo:ro
+      - filestore:/var/lib/odoo
+    ports:
+      - 8069:8069
+      - 8072:8072
+    depends_on:
+      - db
+      - mailer
+
+  db:
+    image: postgres:12
+    environment:
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_DB=postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  mailer:
+    image: mailhog/mailhog
+    ports:
+      - 1025:1025
+      - 8025:8025
+    entrypoint: ['/bin/sh', '-c', 'MailHog &> /dev/null']
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  filestore:
