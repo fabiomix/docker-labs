@@ -1,0 +1,14 @@
+---
+version: "2.1"
+services:
+  # Excalidraw 
+  # Virtual whiteboard for sketching hand-drawn like diagrams.
+
+  excalidraw:
+    image: excalidraw/excalidraw:latest
+    volumes:
+      - ./config/database.db:/database.db
+      - ./storage:/srv
+    ports:
+      - 5000:80
+    restart: unless-stopped
