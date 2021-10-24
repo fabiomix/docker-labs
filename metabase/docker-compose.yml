@@ -1,0 +1,38 @@
+---
+version: "2.1"
+services:
+  # Metabase
+  # Business intelligence, dashboards, and data visualization tools.
+
+  web:
+    image: metabase/metabase:latest
+    environment:
+      - MUID=1000
+      - MGID=1000
+      - JAVA_TIMEZONE=Europe/Rome
+      - MB_DB_TYPE=postgres
+      - MB_DB_HOST=db
+      - MB_DB_PORT=5432
+      - MB_DB_DBNAME=metabase
+      - MB_DB_USER=metabase
+      - MB_DB_PASS=metabase
+      - MB_PASSWORD_COMPLEXITY=normal  # weak/normal/strong
+      - MB_EMOJI_IN_LOGS=false
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:12
+    environment:
+      - POSTGRES_USER=metabase
+      - POSTGRES_PASSWORD=metabase
+      - POSTGRES_DB=metabase
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pgdata:
