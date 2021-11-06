@@ -1,0 +1,15 @@
+---
+version: "2.1"
+services:
+  # Snapdrop
+  # A local file sharing in your browser. Inspired by Apple's Airdrop.
+
+  snapdrop:
+    image: lscr.io/linuxserver/snapdrop:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+    ports:
+      - 8080:80
+    restart: unless-stopped
