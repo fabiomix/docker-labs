@@ -1,0 +1,38 @@
+---
+version: '3.5'
+services:
+
+  sqldb:
+    image: mysql:5.7
+    environment:
+      - MYSQL_DATABASE=kimai
+      - MYSQL_USER=kimaiuser
+      - MYSQL_PASSWORD=kimaipassword
+      - MYSQL_ROOT_PASSWORD=changemeplease
+    volumes:
+      - sqldata:/var/lib/mysql
+    command: --default-storage-engine innodb
+    healthcheck:
+      test: mysqladmin -p$$MYSQL_ROOT_PASSWORD ping -h localhost
+      interval: 20s
+      start_period: 10s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  kimai:
+    image: kimai/kimai2:apache
+    environment:
+      - ADMINMAIL=admin@kimai.local
+      - ADMINPASS=changemeplease
+      - DATABASE_URL=mysql://kimaiuser:kimaipassword@sqldb/kimai
+      - TRUSTED_HOSTS=localhost,127.0.0.1
+    volumes:
+      - webdata:/opt/kimai/var
+    ports:
+      - 8001:8001
+    restart: unless-stopped
+
+volumes:
+  sqldata:
+  webdata:
