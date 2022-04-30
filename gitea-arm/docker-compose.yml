@@ -6,14 +6,17 @@ services:
 
   # Documentation and useful links
   # - https://docs.gitea.io/en-us/config-cheat-sheet/
+  # - https://medium.com/@junwan01/quote-your-ports-in-docker-compose-file-34d9505999ad
 
   gitea:
-    image: kunde21/gitea-arm:v1.11
+    # image: gitea/gitea:latest
+    image: kunde21/gitea-arm:v1.15
     environment:
       - USER_UID=1000
       - USER_GID=1000
-      - DOMAIN=raspberrypi.local
-      - GITEA__server__DISABLE_SSH=true
+      - GITEA__repository__USE_COMPAT_SSH_URI=true
+      - GITEA__server__DOMAIN=raspberrypi.local
+      - GITEA__server__OFFLINE_MODE=true
       - GITEA__service__DISABLE_REGISTRATION=true
       - GITEA__service__REQUIRE_SIGNIN_VIEW=true
     volumes:
@@ -22,6 +25,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     ports:
       - "3000:3000"
+      - "2222:22"
     extra_hosts:
       - "raspberrypi.local:127.0.0.2"
     restart: unless-stopped
