@@ -1,11 +1,12 @@
 ---
 version: "2.1"
 services:
-  # Paperless-ng
+  # Paperless-ngx: community-supported supercharged version of paperless.
   # Scan, index and archive all your physical documents.
 
   paperless:
-    image: lscr.io/linuxserver/paperless-ng:latest
+    image: lscr.io/linuxserver/paperless-ngx:latest
+    container_name: paperless
     environment:
       - PUID=1000
       - PGID=1000
