@@ -1,0 +1,50 @@
+---
+version: '3.5'
+services:
+  # Kimai 2: an open-source time tracking solution.
+  # Tracks work time and prints out a summary of your activities.
+
+  # Documentation and useful links:
+  # - https://www.kimai.org/documentation/docker.html
+  # - https://tobybatch.github.io/kimai2/
+
+  sqldb:
+    image: lscr.io/linuxserver/mariadb:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+      - MYSQL_DATABASE=kimai
+      - MYSQL_USER=kimaiuser
+      - MYSQL_PASSWORD=kimaipassword
+      - MYSQL_ROOT_PASSWORD=changemeplease
+    volumes:
+      - sqldata:/config
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: mysqladmin -p$$MYSQL_ROOT_PASSWORD ping -h localhost
+      interval: 20s
+      start_period: 10s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  kimai:
+    image: kimai/kimai2:apache
+    environment:
+      - ADMINMAIL=admin@kimai.local
+      - ADMINPASS=changemeplease
+      - DATABASE_URL=mysql://kimaiuser:kimaipassword@sqldb/kimai
+      - TRUSTED_HOSTS=
+    volumes:
+      - webdata:/opt/kimai/var
+    ports:
+      - 8001:8001
+    depends_on:
+      - sqldb
+    restart: unless-stopped
+
+volumes:
+  sqldata:
+  webdata:
