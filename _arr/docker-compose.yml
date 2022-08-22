@@ -1,67 +1,120 @@
 ---
 version: "2.1"
 services:
-  # SONARR - PVR for Usenet and BitTorrent users.
-  # RADARR - a fork of Sonarr to work with movies like Couchpotato.
-  # BAZARR - companion app to Sonarr/Radarr that manages and downloads subtitles.
-  # JACKETT - API support for your favorite torrent trackers.
 
   # Documentation and useful links:
-  # - https://wiki.servarr.com/docker-guide#Consistent_and_well_planned_paths
+  # - https://wiki.servarr.com/docker-guide#consistent-and-well-planned-paths
+  # - https://trash-guides.info/Hardlinks/Examples/
 
   sonarr:
-    image: ghcr.io/linuxserver/sonarr:latest
+    image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Rome
     volumes:
-      - ./sonarr:/config
+      - ./config/sonarr:/config
       - ./storage:/data
     ports:
       - 8989:8989
+    depends_on:
+      - prowlarr
     restart: unless-stopped
 
   # radarr:
-  #   image: ghcr.io/linuxserver/radarr:latest
+  #   image: lscr.io/linuxserver/radarr:latest
   #   container_name: radarr
   #   environment:
   #     - PUID=1000
   #     - PGID=1000
   #     - TZ=Europe/Rome
   #   volumes:
-  #     - ./radarr:/config
+  #     - ./config/radarr:/config
   #     - ./storage:/data
   #   ports:
   #     - 7878:7878
+  #   depends_on:
+  #     - prowlarr
   #   restart: unless-stopped
 
   # bazarr:
-  #   image: ghcr.io/linuxserver/bazarr:latest
+  #   image: lscr.io/linuxserver/bazarr:latest
   #   container_name: bazarr
   #   environment:
   #     - PUID=1000
   #     - PGID=1000
   #     - TZ=Europe/Rome
   #   volumes:
-  #     - ./bazarr:/config
+  #     - ./config/bazarr:/config
   #     - ./storage:/data
   #   ports:
   #     - 6767:6767
+  #   depends_on:
+  #     - sonarr
   #   restart: unless-stopped
 
-  jackett:
-    image: ghcr.io/linuxserver/jackett:latest
-    container_name: jackett
+  # lidarr:
+  #   image: lscr.io/linuxserver/lidarr:latest
+  #   container_name: lidarr
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=Europe/Rome
+  #   volumes:
+  #     - ./config/lidarr:/config
+  #     - ./storage:/data
+  #   ports:
+  #     - 8686:8686
+  #   depends_on:
+  #     - prowlarr
+  #   restart: unless-stopped
+
+  # readarr:
+  #   image: lscr.io/linuxserver/readarr:develop
+  #   container_name: readarr
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=Europe/Rome
+  #   volumes:
+  #     - ./config/readarr:/config
+  #     - ./storage:/data
+  #   ports:
+  #     - 8787:8787
+  #   depends_on:
+  #     - prowlarr
+  #   restart: unless-stopped
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
     environment:
       - PUID=1000
       - PGID=1000
-      - AUTO_UPDATE=true  # optional
       - TZ=Europe/Rome
     volumes:
-      - ./jackett:/config
-      - ./storage:/downloads
+      - ./config/prowlarr:/config
     ports:
-      - 9117:9117
+      - 9696:9696
+    restart: unless-stopped
+
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+      - TRANSMISSION_WEB_HOME=/combustion-release/  # optional
+      - USER=username
+      - PASS=passw0rd
+    volumes:
+      - ./config/transmission:/config
+      - ./storage/downloads:/downloads
+      - ./storage/watch:/watch
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
     restart: unless-stopped
